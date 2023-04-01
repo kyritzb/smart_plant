@@ -25,6 +25,14 @@ app.post("/humidity", (req, res) => {
   res.json({ humidity });
 });
 
+setInterval(() => {
+  const buffer = Buffer.alloc(1);
+  bus.readI2cBlockSync(address, command, 1, buffer);
+  const humidity = buffer.readUInt8(0);
+
+  console.log(`Humidity: ${humidity}%`);
+}, 5000);
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
