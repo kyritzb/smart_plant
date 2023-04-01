@@ -31,10 +31,14 @@ app.post("/humidity", (req, res) => {
 
 setInterval(() => {
   const buffer = Buffer.alloc(1);
-  bus.readI2cBlockSync(address, command, 1, buffer);
-  const humidity = buffer.readUInt8(0);
-
-  console.log(`Humidity: ${humidity}%`);
+  bus.readI2cBlock(address, command, 1, buffer, (err, bytesRead, buffer) => {
+    if (err) {
+      console.error(`Failed to read humidity: ${err}`);
+      return;
+    }
+    const humidity = buffer.readUInt8(0);
+    console.log(`Humidity: ${humidity}%`);
+  });
 }, 5000);
 
 // Start the server
